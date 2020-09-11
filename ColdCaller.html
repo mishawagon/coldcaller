@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Cold Caller</title>
+    <link rel="stylesheet" href="ColdCallerReset.css">
+    <style>
+
+      body {
+        font-family: Verdana, Geneva, sans-serif;
+        margin: 2em;
+      }
+      h1 {
+        font-family: Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif;
+        font-weight: bolder;
+        font-size: 2.75em;
+      }
+      h2 {
+        font-family: cursive, Verdana, Geneva, sans-serif;
+        font-weight: 100;
+        font-size: 1.6em;
+        margin: .2em 0 1.6em;
+        font-style: italic;
+        color: grey;
+      }
+      h3 {
+        margin: 0 0 1em;
+      }
+
+      #theStudents {
+        width: 500px;
+        height: 100px;
+      }
+
+      p#studentToCallOn {
+        margin: 2em 0;
+        font-weight: bold;
+        color: green;
+        font-size: 1.25em;
+      }
+
+      p#disclaimer {
+        width: 500px;
+        line-height: 1.4em;
+      }
+      p#disclaimer span {
+        font-size: 0.5em;
+        line-height: 2px !important;
+      }
+
+      button {
+        font-size: 1.2em;
+      }
+    </style>
+
+  </head>
+  <body>
+    <h1>Less Biased Cold-Caller</h1>
+    <h2>A better way to randomly call on students</h2>
+
+    <h3>Student names (comma separated):</h3>
+    <textarea id="theStudents">Mar Lu, Ratoola, Jessie, Fourth Name, etc</textarea>
+    <br />
+    <button type="button" onclick="coldCall()">Click to pick a student</button>
+
+    <p id="studentToCallOn"><i>Student name will appear here</i></p>
+
+
+    <p id="disclaimer">Disclaimer: Cold-calling on students is not always ideal because it can give them anxiety (research shows that this happens unevenly based on student demographics unfortunately [citation needed].) Another approach is to first ask a simple question and have students raise their hands (e.g. 'Raise your hand if you like turtles.'). If you then cold-call on someone from the group that raised their hands it's much less likely to produce anxiety in the students ('Jessie, you had your hand raised, maybe you could tell my why you like turtles?').
+      <br /><br />
+    Sometimes it's better to call on students based on what you know of their interests (e.g. 'Jessie I remember you wrote you like turtles. Tell us why.').[source needed]
+      <br /><br />
+
+    Still, sometimes the benefits of increased engagement and 'gamification' that cold-calling can give outweigh the downsides. In those cases, it's super easy to be biased when calling on students for various reasons, even if the instructor is consiously trying not to be biased. Here is where a more objective piece of software might help. This program is less biased than a person because it calls on students randomly and makes sure everyone got called on once before reshuffling the order<sup>*</sup>.
+    <br />
+    <br />
+    <span><sup>*</sup>Reshuffling makes sure that the next person to be called doesn't match the last person.</span></p>
+    <script>
+      var gPeeps = [];
+      //var ppl = gPeeps.slice(); //this clones the array, vs having ppl point to gPeeps as in ppl = gPeeps
+      var ppl = [];
+      var lastCalled = "";
+      var getStudent = function() {
+        if (gPeeps.length == 1) {
+          return "The only student is "+gPeeps[0];
+        }
+        if (ppl.length == 0) {
+          console.log("last "+lastCalled+" newfirst "+gPeeps[0])
+          do { //Eliminate the bug where the student gets called twice in a row post reshuffle (i.e. this is to prevent the last student from a shuffle being first to be called after the next shuffle.)
+            shuffleArr(gPeeps)
+            console.log("SHUFFLING "+gPeeps)
+          } while (lastCalled == gPeeps[0])
+
+          ppl = gPeeps.slice();
+        }
+
+        var student = ppl[0];
+        ppl.splice(0, 1);
+        lastCalled = student;
+        return student;
+      }
+
+      function shuffleArr(array){
+        for (var i = array.length - 1; i > 0; i--) {
+            var rand = Math.floor(Math.random() * (i + 1));
+            [array[i], array[rand]] = [array[rand], array[i]]
+        }
+      }
+
+      function coldCall() {
+        ppl = [];
+        var names = document.getElementById("theStudents").value;
+        gPeeps = names.split(',');
+        document.getElementById("studentToCallOn").innerHTML = getStudent();
+      }
+    </script>
+  </body>
+</html>
